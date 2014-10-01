@@ -52,6 +52,7 @@ char create_detailTable_sqlite[] = "CREATE TABLE DETAILS ("
 					"RESOLUTION TEXT, "
 					"THUMBNAIL BOOL DEFAULT 0, "
 					"ALBUM_ART INTEGER DEFAULT 0, "
+					"PLAYED BOOL DEFAULT 0, "
 					"ROTATION INTEGER, "
 					"DLNA_PN TEXT, "
                                         "MIME TEXT);";

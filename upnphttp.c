@@ -1873,19 +1873,13 @@ SendResp_dlnafile(struct upnphttp *h, char *object)
 
 	DPRINTF(E_INFO, L_HTTP, "Serving DetailID: %lld [%s]\n", (long long)id, last_file.path);
 
-	/**
-	 * Dump out the path of the file that is beeing served
-	 */
-    char *dumpfile_path;
-    dumpfile_path = getenv("DUMPFILE_PATH");
-    if (dumpfile_path == NULL) {
-        dumpfile_path = "/tmp/minidlna_played_items.txt";
-    }
-
-    FILE *dumpfile = fopen(dumpfile_path, "a");
-    if (dumpfile != NULL) {
-        fprintf(dumpfile, "%s\n", last_file.path);
-        fclose(dumpfile);
+    /*
+     * Mark as played
+     * */
+    ret = sql_exec(db, "UPDATE DETAILS SET PLAYED = 1 WHERE ID = %lld;", (long long)id);
+    if( (ret != SQLITE_OK) )
+    {
+        DPRINTF(E_ERROR, L_HTTP, "Couldn't set DetailID %lld as played!\n", (long long)id);
     }
 
 
