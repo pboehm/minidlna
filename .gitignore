@@ -35,3 +35,8 @@ po/stamp-po
 stamp-h1
 .deps/
 *.o
+*.swp
+minidlnad
+compile
+tagutils/.dirstamp
+minidlna.conf
