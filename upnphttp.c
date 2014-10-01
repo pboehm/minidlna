@@ -102,7 +102,7 @@ static void SendResp_resizedimg(struct upnphttp *, char * url);
 static void SendResp_thumbnail(struct upnphttp *, char * url);
 static void SendResp_dlnafile(struct upnphttp *, char * url);
 
-struct upnphttp * 
+struct upnphttp *
 New_upnphttp(int s)
 {
 	struct upnphttp * ret;
@@ -524,7 +524,7 @@ Send416(struct upnphttp * h)
 void
 Send500(struct upnphttp * h)
 {
-	static const char body500[] = 
+	static const char body500[] =
 		"<HTML><HEAD><TITLE>500 Internal Server Error</TITLE></HEAD>"
 		"<BODY><H1>Internal Server Error</H1>Server encountered "
 		"and Internal Error.</BODY></HTML>\r\n";
@@ -539,7 +539,7 @@ Send500(struct upnphttp * h)
 void
 Send501(struct upnphttp * h)
 {
-	static const char body501[] = 
+	static const char body501[] =
 		"<HTML><HEAD><TITLE>501 Not Implemented</TITLE></HEAD>"
 		"<BODY><H1>Not Implemented</H1>The HTTP Method "
 		"is not implemented by this server.</BODY></HTML>\r\n";
@@ -651,7 +651,7 @@ ProcessHTTPPOST_upnphttp(struct upnphttp * h)
 		{
 			/* we can process the request */
 			DPRINTF(E_DEBUG, L_HTTP, "SOAPAction: %.*s\n", h->req_soapActionLen, h->req_soapAction);
-			ExecuteSoapAction(h, 
+			ExecuteSoapAction(h,
 				h->req_soapAction,
 				h->req_soapActionLen);
 		}
@@ -734,7 +734,7 @@ ProcessHTTPSubscribe_upnphttp(struct upnphttp * h, const char * path)
 	if (type == E_SUBSCRIBE)
 	{
 		/* - add to the subscriber list
-		 * - respond HTTP/x.x 200 OK 
+		 * - respond HTTP/x.x 200 OK
 		 * - Send the initial event message */
 		/* Server:, SID:; Timeout: Second-(xx|infinite) */
 		sid = upnpevents_addSubscriber(path, h->req_Callback,
@@ -792,7 +792,7 @@ ProcessHTTPUnSubscribe_upnphttp(struct upnphttp * h, const char * path)
 	CloseSocket_upnphttp(h);
 }
 
-/* Parse and process Http Query 
+/* Parse and process Http Query
  * called once all the HTTP headers have been received. */
 static void
 ProcessHttpQuery_upnphttp(struct upnphttp * h)
@@ -1236,7 +1236,7 @@ send_data(struct upnphttp * h, char * header, size_t size, int flags)
 	if(n<0)
 	{
 		DPRINTF(E_ERROR, L_HTTP, "send(res_buf): %s\n", strerror(errno));
-	} 
+	}
 	else if(n < h->res_buflen)
 	{
 		/* TODO : handle correctly this case */
@@ -1843,7 +1843,7 @@ SendResp_dlnafile(struct upnphttp *h, char *object)
 				if( strcmp(last_file.mime+6, "x-matroska") == 0 )
 					strcpy(last_file.mime+8, "mkv");
 				/* Samsung TV's such as the A750 can natively support many
-				   Xvid/DivX AVI's however, the DLNA server needs the 
+				   Xvid/DivX AVI's however, the DLNA server needs the
 				   mime type to say video/mpeg */
 				else if( ctype == ESamsungSeriesA && strcmp(last_file.mime+6, "x-msvideo") == 0 )
 					strcpy(last_file.mime+6, "mpeg");
@@ -1872,6 +1872,22 @@ SendResp_dlnafile(struct upnphttp *h, char *object)
 #endif
 
 	DPRINTF(E_INFO, L_HTTP, "Serving DetailID: %lld [%s]\n", (long long)id, last_file.path);
+
+	/**
+	 * Dump out the path of the file that is beeing served
+	 */
+    char *dumpfile_path;
+    dumpfile_path = getenv("DUMPFILE_PATH");
+    if (dumpfile_path == NULL) {
+        dumpfile_path = "/tmp/minidlna_played_items.txt";
+    }
+
+    FILE *dumpfile = fopen(dumpfile_path, "a");
+    if (dumpfile != NULL) {
+        fprintf(dumpfile, "%s\n", last_file.path);
+        fclose(dumpfile);
+    }
+
 
 	if( h->reqflags & FLAG_XFERSTREAMING )
 	{
