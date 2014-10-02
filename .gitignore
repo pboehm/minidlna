@@ -40,3 +40,7 @@ minidlnad
 compile
 tagutils/.dirstamp
 minidlna.conf
+Vagrantfile
+.DS_Store
+.vagrant
+*~
